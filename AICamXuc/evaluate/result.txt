@@ -1,0 +1,20 @@
+Tổng số mẫu thử nghiệm: 281
+Kết quả đánh giá tổng thể:
+Accuracy: 86.12%
+Precision: 0.8607
+Recall: 0.8571
+F1-Score: 0.8572
+
+Kết quả đánh giá cho từng lớp cảm xúc:
+              precision    recall  f1-score   support
+
+        buon       0.93      0.89      0.91        47
+   ngacnhien       0.90      0.98      0.93        44
+       sohai       0.81      0.68      0.74        38
+   trungtinh       0.89      0.91      0.90        46
+     tucgian       0.89      0.86      0.88        58
+         vui       0.74      0.81      0.77        48
+
+    accuracy                           0.86       281
+   macro avg       0.86      0.86      0.86       281
+weighted avg       0.86      0.86      0.86       281

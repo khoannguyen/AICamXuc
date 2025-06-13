@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo dự đoán cảm xúc</title>
+  <style>
+    :root {
+      --primary: #4caf50;
+      --danger: #f44336;
+      --muted: #666;
+      --bg: #f0f4f8;
+      --card: #ffffff;
+      --border: #ccc;
+      --text: #333;
+      --header: #64b5f6;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 20px; background: var(--bg); font-family: 'Segoe UI', Tahoma, sans-serif; color: var(--text); }
+    .wrapper { max-width: 900px; margin: 0 auto; background: var(--card); border-radius: 8px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { text-align: center; font-size: 28px; margin-bottom: 16px; color: var(--header); }
+    .main { display: flex; flex-wrap: wrap; gap: 20px; }
+    .left, .right { background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 16px; }
+    .left { flex: 2 1 300px; }
+    .right { flex: 1 1 200px; max-height: 400px; overflow-y: auto; }
+    .controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+    .btn { padding: 10px 18px; border-radius: 4px; border: none; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    #fileInputBtn { background: var(--muted); color: #fff; }
+    #fileInputBtn:hover { background: #555; }
+    #recordBtn { background: var(--primary); color: #fff; }
+    #recordBtn:hover { background: #45a049; }
+    #recordBtn.recording { background: var(--danger); }
+    #recordBtn.recording:hover { background: #d32f2f; }
+    .timer { margin-left: 8px; font-size: 0.9em; color: var(--muted); }
+    #audioInfo { margin-bottom: 12px; font-size: 0.95em; }
+    audio { width: 100%; margin-bottom: 12px; border-radius: 4px; outline: none; }
+    #predictBtn { background: var(--primary); color: #fff; display: block; margin: 12px auto; width: fit-content; position: relative; }
+    #predictBtn:hover { background: #45a049; }
+    .spinner { border: 3px solid #f3f3f3; border-top: 3px solid var(--text); border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .result-header { background: var(--header); color: #fff; padding: 8px; font-weight: bold; text-align: center; border-radius: 4px 4px 0 0; }
+    .result-body { border: 1px solid var(--border); border-top: none; padding: 16px; min-height: 140px; border-radius: 0 0 4px 4px; position: relative; }
+    #results { font-size: 16px; color: var(--text); }
+    .label { font-size: 36px; margin: 0; display: none; }
+    .prob { font-size: 18px; margin: 6px 0; font-weight: bold; display: none; }
+    .time { font-size: 14px; color: var(--muted); display: none; }
+    .history-header { position: sticky; top: 0; background: var(--header); color: #fff; padding: 8px; font-weight: bold; text-align: center; border-radius: 4px; margin-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { border: 1px solid var(--border); padding: 8px; text-align: center; }
+    @media (max-width: 600px) { .main { flex-direction: column; } .controls { flex-direction: column; align-items: stretch; } .btn { width: 100%; text-align: center; } #predictBtn { width: 100%; } }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <h1>Demo dự đoán cảm xúc</h1>
+    <div class="main">
+      <div class="left">
+        <div class="controls">
+          <input type="file" id="fileInput" accept=".wav" style="display:none">
+          <button class="btn" id="fileInputBtn">Chọn âm thanh</button>
+          <button class="btn" id="recordBtn">Ghi âm trực tiếp</button>
+          <span class="timer" id="recordTimer"></span>
+        </div>
+        <div id="audioInfo"><strong>Âm thanh:</strong> <span id="fileName"></span></div>
+        <audio id="audioPlayer" controls></audio>
+        <button class="btn" id="predictBtn">Nhận diện</button>
+        <div class="result-header">Kết quả dự đoán</div>
+        <div class="result-body">
+          <div id="results">Vui lòng cung cấp dữ liệu âm thanh.</div>
+          <p class="label" id="resultLabel"></p>
+          <p class="prob"  id="resultProb"></p>
+          <p class="time"  id="resultTime"></p>
+        </div>
+      </div>
+      <div class="right">
+        <div class="history-header">Lịch sử dự đoán</div>
+        <table>
+          <thead>
+            <tr><th>Thời gian</th><th>Cảm xúc</th><th>Độ chính xác</th></tr>
+          </thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.webrtc-experiment.com/RecordRTC.js"></script>
+  <script src="{{ url_for('static', filename='recorder.js') }}"></script>
+</body>
+</html>
